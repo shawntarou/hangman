@@ -8,6 +8,17 @@ def get_random_word(words_arr)
   return word
 end
 
+secret_word = get_random_word(word_bank)
+secret_word_arr = Array.new(secret_word.length - 1, 0)
+
+def display_word(word, display_arr)
+  display_arr.each_with_index {|x, index| print x == 1 ? word[index] :'_'} 
+  puts 
+end
+
+puts secret_word
+display_word(secret_word,secret_word_arr)
+
 STICKMAN_PIECES = [' O', '/|\\', ' |', '/ \\']  
 
 def print_stick_man(form_num)
@@ -41,4 +52,12 @@ def print_stick_man(form_num)
   end
 end
 
-prints_stick_man(7)
+=begin
+- Word progress
+  - Array (1s and 0s)
+    - 1: letter has been guessed and to be displayed
+    - 0: letter has not been guessed and is not displayed
+
+- Will need to serialize in the end to save game
+=end
+
