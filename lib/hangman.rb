@@ -66,15 +66,19 @@ def process_letter(word, word_arr, letter)
   word_arr.each_with_index {|x, index| if word[index] == letter then word_arr[index] = 1 end}
 end
 
+def display_game_board(remaining_lives, word, word_arr, guessed_letters)
+  print_stick_man(remaining_lives)    
+  display_word(word, word_arr)
+  puts 'Guessed Letters: [' + guessed_letters.join(', ') + ']'
+end
+
 def run_game(word, word_arr)
   remaining_lives = 7
   won = false
   guessed_letters = []
 
   while (remaining_lives > 0) && (won == false) 
-    print_stick_man(remaining_lives)    
-    display_word(word, word_arr)
-    puts 'Guessed Letters: [' + guessed_letters.join(', ') + ']'
+    display_game_board(remaining_lives, word, word_arr, guessed_letters)
 
     print 'Your Guess (\'sq\' to save & quit): '
     user_guess = gets.chomp()[0]
@@ -99,15 +103,11 @@ def run_game(word, word_arr)
   end
 
   if won == true
-    print_stick_man(remaining_lives)    
-    display_word(word, word_arr)
-    puts 'Guessed Letters: [' + guessed_letters.join(', ') + ']'
+    display_game_board(remaining_lives, word, word_arr, guessed_letters)
     puts 'YOU WIN!'
     puts 'The Secret Word Was: ' + word
   else
-    print_stick_man(remaining_lives)    
-    display_word(word, word_arr)
-    puts 'Guessed Letters: [' + guessed_letters.join(', ') + ']'
+    display_game_board(remaining_lives, word, word_arr, guessed_letters)
     puts 'YOU LOSE!'
     puts 'The Secret Word Was: ' + word
   end
