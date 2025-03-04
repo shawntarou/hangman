@@ -13,11 +13,10 @@ secret_word_arr = Array.new(secret_word.length - 1, 0)
 
 def display_word(word, display_arr)
   display_arr.each_with_index {|x, index| print x == 1 ? word[index] :'_'} 
-  puts 
+  puts "\n\n" 
 end
 
 puts secret_word
-display_word(secret_word,secret_word_arr)
 
 STICKMAN_PIECES = [' O', '/|\\', ' |', '/ \\']  
 
@@ -37,19 +36,103 @@ def print_stick_man(form_num)
     puts STICKMAN_PIECES[0]
     puts STICKMAN_PIECES[1]
     puts STICKMAN_PIECES[2]
+    puts # new line
   when 4
     puts STICKMAN_PIECES[0]
     puts STICKMAN_PIECES[1]
+    puts # new line
+    puts # new line
   when 3
     puts STICKMAN_PIECES[0]
     puts " " + STICKMAN_PIECES[1][1...]
+    puts # new line
+    puts # new line
   when 2
     puts STICKMAN_PIECES[0]
     puts " " + STICKMAN_PIECES[1][1...2]
+    puts # new line
+    puts # new line
   when 1
     puts STICKMAN_PIECES[0]
+    puts # new line
+    puts # new line
+    puts # new line
   else
+    puts # new line
   end
+end
+
+def process_letter(word, word_arr, letter)
+  word_arr.each_with_index {|x, index| if word[index] == letter then word_arr[index] = 1 end}
+end
+
+def run_game(word, word_arr)
+  remaining_lives = 7
+  won = false
+  guessed_letters = []
+
+  while (remaining_lives > 0) && (won == false) 
+    print_stick_man(remaining_lives)    
+    display_word(word, word_arr)
+    puts 'Guessed Letters: [' + guessed_letters.join(', ') + ']'
+
+    print 'Your Guess (\'sq\' to save & quit): '
+    user_guess = gets.chomp()[0]
+    if user_guess == nil || !user_guess.match?(/[[:alpha:]]/) || guessed_letters.include?(user_guess.downcase()) 
+      puts '-------------------------------------'
+      next 
+    end
+    user_guess = user_guess.downcase()
+    guessed_letters.append(user_guess)
+
+    if user_guess == 'sq' then save_game() end #TODO
+
+    if word.include?(user_guess[0]) 
+      process_letter(word, word_arr, user_guess)
+    else
+      remaining_lives -= 1
+    end
+
+    if word_arr.all?(1) then (won = true) end
+
+    puts '-------------------------------------'
+  end
+
+  if won == true
+    print_stick_man(remaining_lives)    
+    display_word(word, word_arr)
+    puts 'Guessed Letters: [' + guessed_letters.join(', ') + ']'
+    puts 'YOU WIN!'
+    puts 'The Secret Word Was: ' + word
+  else
+    print_stick_man(remaining_lives)    
+    display_word(word, word_arr)
+    puts 'Guessed Letters: [' + guessed_letters.join(', ') + ']'
+    puts 'YOU LOSE!'
+    puts 'The Secret Word Was: ' + word
+  end
+=begin
+  GAME LOOP:
+  - Display stickman
+  - Display word array
+  - Prompt user for option (optional input to save game)
+    - Letter?
+      - Does word include letter?
+        - Yes?
+          - Process letter
+            - For every value of letter within word set index to 1
+        - No?
+          - Subtract 1 from remaining lives
+    - sq: save and quit
+  - Check win / loss
+    - If all values in array == 1, then user has won: (won = true)
+=end
+end
+
+run_game(secret_word, secret_word_arr)
+
+def load_game(word, word_arr, progress)
+
 end
 
 =begin
@@ -59,5 +142,8 @@ end
     - 0: letter has not been guessed and is not displayed
 
 - Will need to serialize in the end to save game
+  - Stickman progress
+  - Secret word
+  - Word array
 =end
 
