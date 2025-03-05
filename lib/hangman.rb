@@ -1,3 +1,5 @@
+require 'json'
+
 word_bank = File.readlines('google-10000-english-no-swears.txt')
 
 def get_random_word(words_arr)
@@ -75,74 +77,70 @@ end
 def run_game(word, word_arr)
   remaining_lives = 7
   won = false
+  saved = false
   guessed_letters = []
 
-  while (remaining_lives > 0) && (won == false) 
+  while (remaining_lives > 0) && (won == false) && (saved == false)
     display_game_board(remaining_lives, word, word_arr, guessed_letters)
 
-    print 'Your Guess (\'sq\' to save & quit): '
+    print 'Your Guess (\'*\' to save & quit): '
     user_guess = gets.chomp()[0]
+
+    if user_guess == '*' 
+      save_game(word, word_arr, remaining_lives, guessed_letters) 
+      saved = true
+    end
+
     if user_guess == nil || !user_guess.match?(/[[:alpha:]]/) || guessed_letters.include?(user_guess.downcase()) 
       puts '-------------------------------------'
       next 
     end
-    user_guess = user_guess.downcase()
-    guessed_letters.append(user_guess)
 
-    if user_guess == 'sq' then save_game() end #TODO
+    if !saved
+      user_guess = user_guess.downcase()
+      guessed_letters.append(user_guess)
 
-    if word.include?(user_guess[0]) 
-      process_letter(word, word_arr, user_guess)
-    else
-      remaining_lives -= 1
+      if word.include?(user_guess[0]) 
+        process_letter(word, word_arr, user_guess)
+      else
+        remaining_lives -= 1
+      end
+
+      if word_arr.all?(1) then (won = true) end
+
+      puts '-------------------------------------'
     end
-
-    if word_arr.all?(1) then (won = true) end
-
-    puts '-------------------------------------'
   end
 
-  # add elif when save
-  if won == true
+  if saved == true
+    puts "\nGAME SAVED!"
+  elsif won == true
     display_game_board(remaining_lives, word, word_arr, guessed_letters)
     puts "\nYOU WIN! The Secret Word was " + word
   else
     display_game_board(remaining_lives, word, word_arr, guessed_letters)
     puts "\nYOU LOSE! The Secret Word was " + word
   end
-=begin
-  GAME LOOP:
-  - Display stickman
-  - Display word array
-  - Prompt user for option (optional input to save game)
-    - Letter?
-      - Does word include letter?
-        - Yes?
-          - Process letter
-            - For every value of letter within word set index to 1
-        - No?
-          - Subtract 1 from remaining lives
-    - sq: save and quit
-  - Check win / loss
-    - If all values in array == 1, then user has won: (won = true)
-=end
 end
 
+def save_game(word, word_arr, remaining_lives, guessed_letters)
+  game_hash = {:word => word.chomp, :word_arr => word_arr, :remaining_lives => remaining_lives, :guessed_letters => guessed_letters}
+  Dir.mkdir('saved_games') unless Dir.exist?('saved_games')
+
+  file_counter = 1
+  file_name = 'saved_games/game.json'
+
+  while File.exist?(file_name)
+    file_name = "saved_games/game_#{file_counter}.json"
+    file_counter += 1
+  end
+
+  File.open(file_name, 'w') do |file|
+    file.write(JSON.generate(game_hash)) 
+  end
+end
 run_game(secret_word, secret_word_arr)
 
-def load_game(word, word_arr, progress)
+def load_game()
 
 end
-
-=begin
-- Word progress
-  - Array (1s and 0s)
-    - 1: letter has been guessed and to be displayed
-    - 0: letter has not been guessed and is not displayed
-
-- Will need to serialize in the end to save game
-  - Stickman progress
-  - Secret word
-  - Word array
-=end
-
