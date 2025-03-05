@@ -22,44 +22,42 @@ STICKMAN_PIECES = [' O', '/|\\', ' |', '/ \\']
 
 def print_stick_man(form_num)
   case form_num
-  when 7
+  when 0
     puts STICKMAN_PIECES[0]
     puts STICKMAN_PIECES[1]
     puts STICKMAN_PIECES[2]
     puts STICKMAN_PIECES[3]
-  when 6
+  when 1
     puts STICKMAN_PIECES[0]
     puts STICKMAN_PIECES[1]
     puts STICKMAN_PIECES[2]
     puts " " + STICKMAN_PIECES[3][1...]
-  when 5
+  when 2
     puts STICKMAN_PIECES[0]
     puts STICKMAN_PIECES[1]
     puts STICKMAN_PIECES[2]
     puts # new line
-  when 4
+  when 3
     puts STICKMAN_PIECES[0]
     puts STICKMAN_PIECES[1]
     puts # new line
     puts # new line
-  when 3
+  when 4
     puts STICKMAN_PIECES[0]
     puts " " + STICKMAN_PIECES[1][1...]
     puts # new line
     puts # new line
-  when 2
+  when 5
     puts STICKMAN_PIECES[0]
     puts " " + STICKMAN_PIECES[1][1...2]
     puts # new line
     puts # new line
-  when 1
+  when 6
     puts STICKMAN_PIECES[0]
     puts # new line
     puts # new line
     puts # new line
   else
-    puts 'x_x bleh'
-    puts "\t*dies dramatically*" 
     puts # new line
   end
 end
