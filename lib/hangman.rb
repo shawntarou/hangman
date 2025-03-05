@@ -58,6 +58,8 @@ def print_stick_man(form_num)
     puts # new line
     puts # new line
   else
+    puts 'x_x bleh'
+    puts "\t*dies dramatically*" 
     puts # new line
   end
 end
@@ -102,14 +104,13 @@ def run_game(word, word_arr)
     puts '-------------------------------------'
   end
 
+  # add elif when save
   if won == true
     display_game_board(remaining_lives, word, word_arr, guessed_letters)
-    puts 'YOU WIN!'
-    puts 'The Secret Word Was: ' + word
+    puts "\nYOU WIN! The Secret Word was " + word
   else
     display_game_board(remaining_lives, word, word_arr, guessed_letters)
-    puts 'YOU LOSE!'
-    puts 'The Secret Word Was: ' + word
+    puts "\nYOU LOSE! The Secret Word was " + word
   end
 =begin
   GAME LOOP:
