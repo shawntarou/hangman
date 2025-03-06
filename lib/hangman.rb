@@ -144,42 +144,54 @@ def save_game(word, word_arr, remaining_lives, guessed_letters)
   end
 end
 
+def print_saved_games
+  file_counter = 1
+  puts 'Select Game File: '
+
+  Dir.foreach('saved_games') do |file_name|
+    next if ['.', '..'].include?(file_name)
+
+    puts "#{file_counter}. #{file_name}"
+    file_counter += 1
+  end
+end
+
+def store_saved_games(saved_games)
+  Dir.foreach('saved_games') do |file_name|
+    next if ['.', '..'].include?(file_name)
+
+    saved_games.append(file_name) unless saved_games.include?(file_name)
+  end
+
+  saved_games
+end
+
 def load_game
   unless Dir.exist?('saved_games')
     puts 'No Saved Games'
     return
   end
 
-  file_counter = 1
   saved_games = []
+  file_to_load = nil
 
-  puts 'Select Game File: '
+  loop do
+    print_saved_games
+    saved_games = store_saved_games(saved_games)
 
-  Dir.foreach('saved_games') do |file_name|
-    next if ['.', '..'].include?(file_name)
-
-    saved_games.append(file_name)
-    puts "#{file_counter}. #{file_name}"
-    file_counter += 1
-  end
-
-  print "\n> "
-  user_choice = gets.chomp
-
-  puts # new line
-
-  begin
+    print "\n> "
+    user_choice = gets.chomp
+    puts # new line
     raise StandardError if user_choice.to_i > saved_games.size || user_choice.to_i < 1
 
     file_to_load = File.new("saved_games/#{saved_games[user_choice.to_i - 1]}", 'r')
+    raise StandardError if file_to_load.nil?
   rescue StandardError
     'Invalid Choice'
+  else
+    break unless file_to_load.nil?
   end
 
-  if file_to_load.nil?
-    puts 'Invalid Choice'
-    return
-  end
   saved_data = file_to_load.read
   saved_data = JSON.parse saved_data.gsub('=>', ':')
 
