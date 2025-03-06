@@ -69,7 +69,23 @@ end
 def display_game_board(remaining_lives, word, word_arr, guessed_letters)
   print_stick_man(remaining_lives)
   display_word(word, word_arr)
-  puts "Guessed Letters: [' #{guessed_letters.join(', ')} ']"
+  puts "Guessed Letters: [ #{guessed_letters.join(', ')} ]"
+end
+
+def get_user_guess(guessed_letters)
+  user_guess = ''
+  loop do
+    print 'Your Guess (\'*\' to save & quit): '
+    user_guess = gets.chomp[0]
+
+    if user_guess.nil? || !user_guess.match?(/[[:alpha:]]/) || guessed_letters.include?(user_guess.downcase)
+      puts '-------------------------------------'
+      next
+    end
+
+    break
+  end
+  user_guess
 end
 
 def run_game(word, word_arr)
@@ -81,17 +97,11 @@ def run_game(word, word_arr)
   while (remaining_lives > 0) && (won == false) && (saved == false)
     display_game_board(remaining_lives, word, word_arr, guessed_letters)
 
-    print 'Your Guess (\'*\' to save & quit): '
-    user_guess = gets.chomp[0]
+    user_guess = get_user_guess(guessed_letters)
 
     if user_guess == '*'
       save_game(word, word_arr, remaining_lives, guessed_letters)
       saved = true
-    end
-
-    if user_guess.nil? || !user_guess.match?(/[[:alpha:]]/) || guessed_letters.include?(user_guess.downcase)
-      puts '-------------------------------------'
-      next
     end
 
     next if saved
@@ -174,5 +184,5 @@ def load_game
   puts file_to_load.read
 end
 
-# run_game(secret_word, secret_word_arr)
-load_game
+run_game(secret_word, secret_word_arr)
+# load_game
