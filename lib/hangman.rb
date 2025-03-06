@@ -78,6 +78,8 @@ def get_user_guess(guessed_letters)
     print 'Your Guess (\'*\' to save & quit): '
     user_guess = gets.chomp[0]
 
+    break if user_guess == '*'
+
     if user_guess.nil? || !user_guess.match?(/[[:alpha:]]/) || guessed_letters.include?(user_guess.downcase)
       puts '-------------------------------------'
       next
@@ -88,11 +90,9 @@ def get_user_guess(guessed_letters)
   user_guess
 end
 
-def run_game(word, word_arr)
-  remaining_lives = 7
+def run_game(word, word_arr, remaining_lives = 7, guessed_letters = [])
   won = false
   saved = false
-  guessed_letters = []
 
   while (remaining_lives > 0) && (won == false) && (saved == false)
     display_game_board(remaining_lives, word, word_arr, guessed_letters)
@@ -104,7 +104,7 @@ def run_game(word, word_arr)
       saved = true
     end
 
-    next if saved
+    break if saved
 
     user_guess = user_guess.downcase
     guessed_letters.append(user_guess)
@@ -137,7 +137,7 @@ def save_game(word, word_arr, remaining_lives, guessed_letters)
   Dir.mkdir('saved_games') unless Dir.exist?('saved_games')
 
   file_counter = 1
-  file_name = 'saved_games/game.json'
+  file_name = 'saved_games/game_1.json'
 
   while File.exist?(file_name)
     file_name = "saved_games/game_#{file_counter}.json"
@@ -180,9 +180,11 @@ def load_game
     puts 'Invalid Choice'
     return
   end
+  saved_data = file_to_load.read
+  saved_data = JSON.parse saved_data.gsub('=>', ':')
 
-  puts file_to_load.read
+  run_game(saved_data['word'], saved_data['word_arr'], saved_data['remaining_lives'], saved_data['guessed_letters'])
 end
 
-run_game(secret_word, secret_word_arr)
-# load_game
+# run_game(secret_word, secret_word_arr)
+load_game
