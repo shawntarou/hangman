@@ -166,6 +166,8 @@ def load_game
   print "\n> "
   user_choice = gets.chomp
 
+  puts # new line
+
   begin
     raise StandardError if user_choice.to_i > saved_games.size || user_choice.to_i < 1
 
@@ -185,11 +187,10 @@ def load_game
 end
 
 def print_menu
-  puts "H A N G M A N:\n\n"
+  puts " - H A N G M A N - \n"
   puts '1. New Game'
   puts '2. Load Game'
-  puts # new line
-  print '> '
+  print "\n> "
 end
 
 user_menu_choice = -1
