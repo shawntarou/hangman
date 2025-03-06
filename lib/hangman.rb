@@ -8,15 +8,10 @@ def get_random_word(words_arr)
   word
 end
 
-secret_word = get_random_word(word_bank)
-secret_word_arr = Array.new(secret_word.length - 1, 0)
-
 def display_word(word, display_arr)
   display_arr.each_with_index { |x, index| print x == 1 ? word[index] : '_' }
   puts "\n\n"
 end
-
-puts secret_word
 
 STICKMAN_PIECES = [' O', '/|\\', ' |', '/ \\']
 
@@ -157,6 +152,9 @@ def load_game
 
   file_counter = 1
   saved_games = []
+
+  puts 'Select Game File: '
+
   Dir.foreach('saved_games') do |file_name|
     next if ['.', '..'].include?(file_name)
 
@@ -165,7 +163,7 @@ def load_game
     file_counter += 1
   end
 
-  print 'Choice: '
+  print "\n> "
   user_choice = gets.chomp
 
   begin
@@ -186,5 +184,32 @@ def load_game
   run_game(saved_data['word'], saved_data['word_arr'], saved_data['remaining_lives'], saved_data['guessed_letters'])
 end
 
-# run_game(secret_word, secret_word_arr)
-load_game
+def print_menu
+  puts "H A N G M A N:\n\n"
+  puts '1. New Game'
+  puts '2. Load Game'
+  puts # new line
+  print '> '
+end
+
+user_menu_choice = -1
+
+loop do
+  print_menu
+  user_menu_choice = gets.chomp.to_i
+
+  break if [1, 2].include?(user_menu_choice)
+end
+
+puts # new line
+
+case user_menu_choice
+when 1
+  secret_word = get_random_word(word_bank)
+  secret_word_arr = Array.new(secret_word.length - 1, 0)
+  run_game(secret_word, secret_word_arr)
+when 2
+  load_game
+else
+  'ERROR'
+end
