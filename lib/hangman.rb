@@ -123,7 +123,7 @@ def display_game_board(remaining_lives, word, word_arr, guessed_letters)
 end
 
 def process_letter(word, word_arr, letter)
-  word_arr.each_with_index { |x, index| word_arr[index] = 1 if word[index] == letter }
+  word_arr.each_with_index { |_, index| word_arr[index] = 1 if word[index] == letter }
 end
 
 def save_game(word, word_arr, remaining_lives, guessed_letters)
