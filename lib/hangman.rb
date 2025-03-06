@@ -13,76 +13,48 @@ def display_word(word, display_arr)
   puts "\n\n"
 end
 
-STICKMAN_PIECES = [' O', '/|\\', ' |', '/ \\']
-
 def print_stick_man(form_num)
+  stickman_pieces = [' O', '/|\\', ' |', '/ \\']
+
   case form_num
   when 0
-    puts STICKMAN_PIECES[0]
-    puts STICKMAN_PIECES[1]
-    puts STICKMAN_PIECES[2]
-    puts STICKMAN_PIECES[3]
+    puts stickman_pieces[0]
+    puts stickman_pieces[1]
+    puts stickman_pieces[2]
+    puts stickman_pieces[3]
   when 1
-    puts STICKMAN_PIECES[0]
-    puts STICKMAN_PIECES[1]
-    puts STICKMAN_PIECES[2]
-    puts ' ' + STICKMAN_PIECES[3][1...]
+    puts stickman_pieces[0]
+    puts stickman_pieces[1]
+    puts stickman_pieces[2]
+    puts ' ' + stickman_pieces[3][1...]
   when 2
-    puts STICKMAN_PIECES[0]
-    puts STICKMAN_PIECES[1]
-    puts STICKMAN_PIECES[2]
+    puts stickman_pieces[0]
+    puts stickman_pieces[1]
+    puts stickman_pieces[2]
     puts # new line
   when 3
-    puts STICKMAN_PIECES[0]
-    puts STICKMAN_PIECES[1]
+    puts stickman_pieces[0]
+    puts stickman_pieces[1]
     puts # new line
     puts # new line
   when 4
-    puts STICKMAN_PIECES[0]
-    puts ' ' + STICKMAN_PIECES[1][1...]
+    puts stickman_pieces[0]
+    puts ' ' + stickman_pieces[1][1...]
     puts # new line
     puts # new line
   when 5
-    puts STICKMAN_PIECES[0]
-    puts ' ' + STICKMAN_PIECES[1][1...2]
+    puts stickman_pieces[0]
+    puts ' ' + stickman_pieces[1][1...2]
     puts # new line
     puts # new line
   when 6
-    puts STICKMAN_PIECES[0]
+    puts stickman_pieces[0]
     puts # new line
     puts # new line
     puts # new line
   else
     puts # new line
   end
-end
-
-def process_letter(word, word_arr, letter)
-  word_arr.each_with_index { |x, index| word_arr[index] = 1 if word[index] == letter }
-end
-
-def display_game_board(remaining_lives, word, word_arr, guessed_letters)
-  print_stick_man(remaining_lives)
-  display_word(word, word_arr)
-  puts "Guessed Letters: [ #{guessed_letters.join(', ')} ]"
-end
-
-def get_user_guess(guessed_letters)
-  user_guess = ''
-  loop do
-    print 'Your Guess (\'*\' to save & quit): '
-    user_guess = gets.chomp[0]
-
-    break if user_guess == '*'
-
-    if user_guess.nil? || !user_guess.match?(/[[:alpha:]]/) || guessed_letters.include?(user_guess.downcase)
-      puts '-------------------------------------'
-      next
-    end
-
-    break
-  end
-  user_guess
 end
 
 def run_game(word, word_arr, remaining_lives = 7, guessed_letters = [])
@@ -126,6 +98,34 @@ def run_game(word, word_arr, remaining_lives = 7, guessed_letters = [])
   end
 end
 
+def get_user_guess(guessed_letters)
+  user_guess = ''
+  loop do
+    print 'Your Guess (\'*\' to save & quit): '
+    user_guess = gets.chomp[0]
+
+    break if user_guess == '*'
+
+    if user_guess.nil? || !user_guess.match?(/[[:alpha:]]/) || guessed_letters.include?(user_guess.downcase)
+      puts '-------------------------------------'
+      next
+    end
+
+    break
+  end
+  user_guess
+end
+
+def display_game_board(remaining_lives, word, word_arr, guessed_letters)
+  print_stick_man(remaining_lives)
+  display_word(word, word_arr)
+  puts "Guessed Letters: [ #{guessed_letters.join(', ')} ]"
+end
+
+def process_letter(word, word_arr, letter)
+  word_arr.each_with_index { |x, index| word_arr[index] = 1 if word[index] == letter }
+end
+
 def save_game(word, word_arr, remaining_lives, guessed_letters)
   game_hash = { word: word.chomp, word_arr: word_arr, remaining_lives: remaining_lives,
                 guessed_letters: guessed_letters }
@@ -142,28 +142,6 @@ def save_game(word, word_arr, remaining_lives, guessed_letters)
   File.open(file_name, 'w') do |file|
     file.write(JSON.generate(game_hash))
   end
-end
-
-def print_saved_games
-  file_counter = 1
-  puts 'Select Game File: '
-
-  Dir.foreach('saved_games') do |file_name|
-    next if ['.', '..'].include?(file_name)
-
-    puts "#{file_counter}. #{file_name}"
-    file_counter += 1
-  end
-end
-
-def store_saved_games(saved_games)
-  Dir.foreach('saved_games') do |file_name|
-    next if ['.', '..'].include?(file_name)
-
-    saved_games.append(file_name) unless saved_games.include?(file_name)
-  end
-
-  saved_games
 end
 
 def load_game
@@ -196,6 +174,28 @@ def load_game
   saved_data = JSON.parse saved_data.gsub('=>', ':')
 
   run_game(saved_data['word'], saved_data['word_arr'], saved_data['remaining_lives'], saved_data['guessed_letters'])
+end
+
+def print_saved_games
+  file_counter = 1
+  puts 'Select Game File: '
+
+  Dir.foreach('saved_games') do |file_name|
+    next if ['.', '..'].include?(file_name)
+
+    puts "#{file_counter}. #{file_name}"
+    file_counter += 1
+  end
+end
+
+def store_saved_games(saved_games)
+  Dir.foreach('saved_games') do |file_name|
+    next if ['.', '..'].include?(file_name)
+
+    saved_games.append(file_name) unless saved_games.include?(file_name)
+  end
+
+  saved_games
 end
 
 def print_menu
